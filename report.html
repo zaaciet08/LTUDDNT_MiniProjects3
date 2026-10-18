@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Báo Cáo Dự Án Mini-Project 3: VKU Receipt OCR & Expense Tracker</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+  @page {
+    size: A4;
+    margin: 18mm 16mm 20mm 16mm;
+    @bottom-center {
+      content: counter(page);
+    }
+  }
+
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: #1e293b;
+    line-height: 1.6;
+    font-size: 13.5px;
+    background-color: #ffffff;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Page break utilities */
+  .page-break {
+    page-break-after: always;
+    break-after: page;
+  }
+  .avoid-break {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  /* Cover Page */
+  .cover-page {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    text-align: center;
+    padding: 30px 20px 20px 20px;
+    page-break-after: always;
+    border: 3px double #1e3a8a;
+    border-radius: 8px;
+    position: relative;
+    box-sizing: border-box;
+  }
+
+  .cover-header {
+    border-bottom: 2px solid #2563eb;
+    padding-bottom: 20px;
+  }
+  .cover-header h3 {
+    font-size: 13px;
+    font-weight: 700;
+    color: #1e3a8a;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  .cover-header h2 {
+    font-size: 15px;
+    font-weight: 800;
+    color: #1e40af;
+    margin-top: 5px;
+    text-transform: uppercase;
+  }
+  .cover-header .divider {
+    width: 140px;
+    height: 3px;
+    background: #2563eb;
+    margin: 10px auto 0;
+  }
+
+  .cover-body {
+    margin: auto 0;
+    padding: 30px 10px;
+  }
+  .cover-badge {
+    display: inline-block;
+    background: #eff6ff;
+    color: #2563eb;
+    border: 1px solid #bfdbfe;
+    padding: 6px 18px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 18px;
+  }
+  .cover-title {
+    font-size: 26px;
+    font-weight: 800;
+    color: #0f172a;
+    text-transform: uppercase;
+    line-height: 1.35;
+    margin-bottom: 12px;
+  }
+  .cover-subtitle {
+    font-size: 15px;
+    font-weight: 500;
+    color: #475569;
+    max-width: 580px;
+    margin: 0 auto 25px;
+  }
+  .cover-subject {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1e3a8a;
+    background: #f8fafc;
+    border-left: 4px solid #2563eb;
+    padding: 10px 16px;
+    display: inline-block;
+    border-radius: 0 8px 8px 0;
+  }
+
+  .cover-footer {
+    display: flex;
+    justify-content: space-between;
+    text-align: left;
+    background: #f8fafc;
+    padding: 18px 24px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    margin-top: 20px;
+  }
+  .cover-footer .info-col h4 {
+    font-size: 11px;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+  }
+  .cover-footer .info-col p {
+    font-size: 13px;
+    font-weight: 600;
+    color: #0f172a;
+    margin-bottom: 3px;
+  }
+  .cover-date {
+    font-size: 12px;
+    color: #64748b;
+    font-weight: 500;
+    margin-top: 15px;
+    text-align: center;
+  }
+
+  /* Content typography */
+  h1 {
+    font-size: 19px;
+    font-weight: 800;
+    color: #1e3a8a;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 7px;
+    margin: 24px 0 14px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  h1::before {
+    content: "";
+    display: inline-block;
+    width: 6px;
+    height: 20px;
+    background: #2563eb;
+    border-radius: 3px;
+  }
+  h2 {
+    font-size: 15px;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 18px 0 10px 0;
+  }
+  h3 {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #334155;
+    margin: 12px 0 6px 0;
+  }
+  p {
+    margin-bottom: 10px;
+    text-align: justify;
+  }
+
+  /* Cards and Callouts */
+  .callout {
+    background: #eff6ff;
+    border-left: 4px solid #3b82f6;
+    padding: 12px 16px;
+    border-radius: 0 8px 8px 0;
+    margin: 14px 0;
+    font-size: 13px;
+  }
+  .callout-success {
+    background: #ecfdf5;
+    border-left-color: #10b981;
+    color: #065f46;
+  }
+  .callout-title {
+    font-weight: 700;
+    color: #1e40af;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .callout-success .callout-title {
+    color: #047857;
+  }
+
+  /* Grid Layouts */
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin: 14px 0;
+  }
+  .grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    margin: 14px 0;
+  }
+  .feature-box {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 12px 14px;
+  }
+  .feature-box h4 {
+    font-size: 13px;
+    font-weight: 700;
+    color: #1e40af;
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .feature-box p {
+    font-size: 12.5px;
+    color: #475569;
+    margin-bottom: 0;
+  }
+
+  /* Table styling */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 14px 0;
+    font-size: 12.5px;
+  }
+  th, td {
+    padding: 8px 10px;
+    border: 1px solid #e2e8f0;
+    text-align: left;
+  }
+  th {
+    background: #f1f5f9;
+    color: #1e293b;
+    font-weight: 700;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  tr:nth-child(even) {
+    background-color: #f8fafc;
+  }
+
+  /* Pipeline Diagram */
+  .pipeline-container {
+    background: #0f172a;
+    color: #f8fafc;
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin: 16px 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px;
+    line-height: 1.5;
+  }
+  .pipeline-step {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 6px;
+    padding: 8px 12px;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .pipeline-step .step-title {
+    font-weight: 600;
+    color: #38bdf8;
+  }
+  .pipeline-step .step-desc {
+    color: #94a3b8;
+    font-size: 11px;
+  }
+  .pipeline-arrow {
+    text-align: center;
+    color: #64748b;
+    margin: -3px 0 5px 0;
+    font-size: 14px;
+  }
+
+  /* Code Blocks */
+  pre {
+    background: #0f172a;
+    color: #e2e8f0;
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px;
+    line-height: 1.45;
+    overflow-x: auto;
+    margin: 12px 0;
+  }
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px;
+    background: #f1f5f9;
+    color: #2563eb;
+    padding: 2px 5px;
+    border-radius: 4px;
+  }
+  pre code {
+    background: transparent;
+    color: inherit;
+    padding: 0;
+  }
+
+  /* Badge and Tags */
+  .badge {
+    display: inline-block;
+    padding: 2px 7px;
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 4px;
+    background: #e0f2fe;
+    color: #0369a1;
+  }
+  .badge-green {
+    background: #dcfce7;
+    color: #15803d;
+  }
+  .badge-purple {
+    background: #f3e8ff;
+    color: #7e22ce;
+  }
+
+  /* Header & Footer on content pages */
+  .doc-header {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #cbd5e1;
+    padding-bottom: 6px;
+    margin-bottom: 16px;
+    font-size: 11px;
+    color: #64748b;
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+
+  ul, ol {
+    margin-left: 20px;
+    margin-bottom: 10px;
+  }
+  li {
+    margin-bottom: 4px;
+  }
+</style>
+</head>
+<body>
+
+<!-- ================= COVER PAGE ================= -->
+<div class="cover-page">
+  <div class="cover-header">
+    <h3>ĐẠI HỌC ĐÀ NẴNG</h3>
+    <h2>TRƯỜNG ĐẠI HỌC CÔNG NGHỆ THÔNG TIN VÀ TRUYỀN THÔNG VIỆT - HÀN</h2>
+    <h3>KHOA KHOA HỌC MÁY TÍNH & CÔNG NGHỆ THÔNG TIN</h3>
+    <div class="divider"></div>
+  </div>
+
+  <div class="cover-body">
+    <div class="cover-badge">BÁO CÁO KẾT THÚC MINI-PROJECT 3</div>
+    <div class="cover-title">
+      VKU RECEIPT OCR & EXPENSE TRACKER
+    </div>
+    <div class="cover-subtitle">
+      Ứng dụng Quản lý Chi tiêu & Trích xuất Hóa đơn Tự động bằng Công nghệ On-device OCR cho Sinh viên và Câu lạc bộ VKU
+    </div>
+    <div class="cover-subject">
+      HỌC PHẦN: PHÁT TRIỂN ỨNG DỤNG ĐA NỀN TẢNG (CROSS-PLATFORM DEVELOPMENT)
+    </div>
+  </div>
+
+  <div>
+    <div class="cover-footer">
+      <div class="info-col">
+        <h4>Sinh viên thực hiện</h4>
+        <p>Họ và tên: <strong>Võ Hoàng Gia Kiệt</strong></p>
+        <p>Mã sinh viên: <strong>22IT...</strong></p>
+        <p>Email: <strong>kietvhg.22it@vku.udn.vn</strong></p>
+        <p>Lớp học phần: <strong>Phát triển ứng dụng đa nền tảng</strong></p>
+      </div>
+      <div class="info-col">
+        <h4>Giảng viên & Đơn vị</h4>
+        <p>Giảng viên hướng dẫn: <strong>Bộ môn Công nghệ phần mềm</strong></p>
+        <p>Khoa: <strong>Khoa học máy tính</strong></p>
+        <p>Kho lưu trữ (GitHub): <strong>zaaciet08/LTUDDNT_MiniProjects3</strong></p>
+        <p>Nền tảng hỗ trợ: <strong>Android, Web, iOS, Windows</strong></p>
+      </div>
+    </div>
+    <div class="cover-date">
+      Đà Nẵng, Tháng 10 Năm 2026
+    </div>
+  </div>
+</div>
+
+<!-- ================= PAGE 1 ================= -->
+<div class="doc-header">
+  <span>Học phần: Phát triển ứng dụng đa nền tảng</span>
+  <span>Báo Cáo Mini-Project 3: VKU Receipt OCR</span>
+</div>
+
+<h1>1. Giới thiệu Bài toán & Mục tiêu Dự án</h1>
+
+<h2>1.1. Bối cảnh thực tiễn tại VKU</h2>
+<p>
+  Trong quá trình học tập và hoạt động ngoại khóa tại Trường Đại học Công nghệ Thông tin và Truyền thông Việt - Hàn (VKU), sinh viên cũng như Ban chủ nhiệm các Câu lạc bộ (CLB) thường xuyên phải giải quyết số lượng lớn các hóa đơn tiền mặt (hóa đơn mua văn phòng phẩm làm việc, in ấn tài liệu/backdrop, ăn uống giao lưu, mua sắm linh kiện thiết bị sự kiện, tiền xe di chuyển,...).
+</p>
+<p>
+  Quy trình truyền thống hiện nay chủ yếu là **ghi chép thủ công** vào sổ tay hoặc nhập tay từng dòng số liệu vào Google Sheets/Excel. Quy trình này bộc lộ nhiều điểm hạn chế nghiêm trọng:
+</p>
+<ul>
+  <li><strong>Tốn thời gian và công sức:</strong> Phải đối chiếu từng tờ hóa đơn giấy với số liệu gõ vào máy tính.</li>
+  <li><strong>Dễ sai lệch dữ liệu:</strong> Nhầm lẫn số 0, sai dấu chấm phân cách hàng nghìn, sai ngày tháng giao dịch.</li>
+  <li><strong>Thất lạc chứng từ:</strong> Hóa đơn nhiệt bị mờ chữ hoặc thất lạc sau sự kiện, gây khó khăn cho việc nghiệm thu ngân sách CLB.</li>
+  <li><strong>Thiếu tính trực quan:</strong> Khó nắm bắt phân bổ tỷ lệ chi tiêu theo danh mục và xu hướng chi tiêu trong tuần.</li>
+</ul>
+
+<h2>1.2. Mục tiêu của Dự án</h2>
+<div class="callout callout-success avoid-break">
+  <div class="callout-title">🎯 Mục tiêu cốt lõi</div>
+  Xây dựng một ứng dụng đa nền tảng hoàn chỉnh (Production-ready) với tên gọi <strong>VKU Receipt OCR & Expense Tracker</strong>, tự động hóa toàn diện chu trình xử lý hóa đơn tài chính: <em>Chụp ảnh hóa đơn ➔ Nhận diện chữ Offline On-Device ➔ Bóc tách Regex thông minh ➔ Giao diện đối soát xác nhận ➔ Lưu trữ cơ sở dữ liệu SQLite & Web In-Memory ➔ Vẽ biểu đồ Canvas phân tích chi tiêu.</em>
+</div>
+
+<div class="grid-3 avoid-break">
+  <div class="feature-box">
+    <h4>⚡ Tốc độ & Tiện lợi</h4>
+    <p>Trích xuất đầy đủ Tên đơn vị bán, Ngày giờ, Tổng số tiền và Gợi ý danh mục chỉ trong chưa đầy 1 giây.</p>
+  </div>
+  <div class="feature-box">
+    <h4>🔒 100% Offline & Bảo mật</h4>
+    <p>Sử dụng Google ML Kit chạy hoàn toàn cục bộ trên máy, không gửi ảnh lên máy chủ ngoài, bảo mật hóa đơn tuyệt đối.</p>
+  </div>
+  <div class="feature-box">
+    <h4>🌐 Khả năng Đa Nền Tảng</h4>
+    <p>Chạy mượt mà trên Mobile (Android, iOS), Web Browser (Chrome/Edge) và Desktop (Windows/macOS).</p>
+  </div>
+</div>
+
+---
+
+<h1>2. Kiến Trúc Kỹ Thuật (System Architecture)</h1>
+
+<p>
+  Ứng dụng được thiết kế theo mô hình phân lớp rõ ràng (Clean Architecture Pattern), đảm bảo tính module hóa, dễ dàng mở rộng và bảo trì.
+</p>
+
+<h2>2.1. Luồng xử lý dữ liệu (Data Processing Pipeline)</h2>
+<div class="pipeline-container avoid-break">
+  <div class="pipeline-step">
+    <div>
+      <span class="step-title">[BƯỚC 1] Camera / Thư viện ảnh</span>
+      <div class="step-desc">Sử dụng image_picker để thu nhận hình ảnh hóa đơn chất lượng cao</div>
+    </div>
+    <span class="badge">Raw Image</span>
+  </div>
+  <div class="pipeline-arrow">▼</div>
+  <div class="pipeline-step">
+    <div>
+      <span class="step-title">[BƯỚC 2] Google ML Kit OCR Engine</span>
+      <div class="step-desc">Nhận dạng ký tự quang học on-device với TextRecognitionScript.latin</div>
+    </div>
+    <span class="badge badge-purple">Raw Text</span>
+  </div>
+  <div class="pipeline-arrow">▼</div>
+  <div class="pipeline-step">
+    <div>
+      <span class="step-title">[BƯỚC 3] Dart Regex Parser Engine</span>
+      <div class="step-desc">Thuật toán bóc tách Merchant, Date, Total Amount và Auto-categorization</div>
+    </div>
+    <span class="badge">Parsed Object</span>
+  </div>
+  <div class="pipeline-arrow">▼</div>
+  <div class="pipeline-step">
+    <div>
+      <span class="step-title">[BƯỚC 4] Review & Verification UI</span>
+      <div class="step-desc">Màn hình cho phép người dùng kiểm tra ảnh gốc, sửa đổi dữ liệu trước khi lưu</div>
+    </div>
+    <span class="badge badge-green">Validated</span>
+  </div>
+  <div class="pipeline-arrow">▼</div>
+  <div class="pipeline-step">
+    <div>
+      <span class="step-title">[BƯỚC 5] Local Database Helper</span>
+      <div class="step-desc">Lưu trữ bền vững SQLite (Native) hoặc In-Memory Store (Web Platform)</div>
+    </div>
+    <span class="badge">Persistent DB</span>
+  </div>
+  <div class="pipeline-arrow">▼</div>
+  <div class="pipeline-step">
+    <div>
+      <span class="step-title">[BƯỚC 6] Custom Canvas Visualizer</span>
+      <div class="step-desc">Vẽ trực tiếp Donut Chart và 7-Day Bar Chart bằng Flutter CustomPainter</div>
+    </div>
+    <span class="badge badge-green">UI Render</span>
+  </div>
+</div>
+
+<div class="page-break"></div>
+
+<!-- ================= PAGE 2 ================= -->
+<div class="doc-header">
+  <span>Học phần: Phát triển ứng dụng đa nền tảng</span>
+  <span>Báo Cáo Mini-Project 3: VKU Receipt OCR</span>
+</div>
+
+<h2>2.2. Công nghệ & Thư viện sử dụng</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Thư viện / Công nghệ</th>
+      <th>Phiên bản</th>
+      <th>Vai trò & Chức năng trong Dự án</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Flutter SDK</strong></td>
+      <td>3.x / Dart 3.x</td>
+      <td>Framework đa nền tảng chính, tuân thủ Material Design 3.</td>
+    </tr>
+    <tr>
+      <td><strong>google_mlkit_text_recognition</strong></td>
+      <td>^0.17.1</td>
+      <td>Mô hình học máy OCR On-Device offline từ Google, hỗ trợ chữ Latinh có dấu tiếng Việt.</td>
+    </tr>
+    <tr>
+      <td><strong>sqflite & path</strong></td>
+      <td>^2.4.4+1</td>
+      <td>Hệ quản trị cơ sở dữ liệu SQLite cục bộ cho nền tảng di động và desktop.</td>
+    </tr>
+    <tr>
+      <td><strong>image_picker</strong></td>
+      <td>^1.2.4</td>
+      <td>Giao tiếp với phần cứng máy ảnh hoặc chọn tệp hóa đơn từ thư viện ảnh máy chủ.</td>
+    </tr>
+    <tr>
+      <td><strong>intl</strong></td>
+      <td>^0.20.3</td>
+      <td>Định dạng tiền tệ VNĐ (₫, VND), ngày tháng (dd/MM/yyyy) chuẩn hóa theo khu vực Việt Nam.</td>
+    </tr>
+    <tr>
+      <td><strong>CustomPainter (Flutter Core)</strong></td>
+      <td>Built-in</td>
+      <td>Tự xây dựng biểu đồ tròn (Donut) và cột (Bar) không phụ thuộc thư viện chart bên ngoài.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>2.3. Cấu trúc mã nguồn thư mục (Source Tree)</h2>
+<pre><code>lib/
+├── core/
+│   ├── database/
+│   │   └── database_helper.dart      # Singleton DB: SQLite CRUD & Web in-memory fallback
+│   └── utils/
+│       ├── currency_format.dart      # Định dạng hiển thị tiền tệ VNĐ
+│       └── date_format.dart          # Định dạng ngày giờ chuẩn hóa
+├── models/
+│   ├── expense_category.dart         # Enum 7 danh mục chi tiêu & màu sắc đại diện
+│   └── expense_item.dart             # Data Model ExpenseItem & SQLite serialization
+├── services/
+│   ├── receipt_parser.dart           # Regex Engine bóc tách Total, Date, Merchant, Category
+│   └── ocr_service.dart              # Wrapper Google ML Kit & Safe Fallback cho Web
+├── presentation/
+│   ├── screens/
+│   │   ├── home_dashboard_screen.dart # Trang chủ: Tổng tiền tháng, số dư, recent list
+│   │   ├── scan_receipt_screen.dart   # Màn hình quét camera, chọn ảnh & demo scan
+│   │   ├── review_receipt_screen.dart # Màn hình xác nhận, sửa đổi thông tin hóa đơn
+│   │   ├── expense_list_screen.dart   # Sổ quỹ đầy đủ: Tìm kiếm, lọc category, xóa item
+│   │   └── statistics_screen.dart     # Báo cáo đồ thị: Donut Chart & 7-Day Bar Chart
+│   └── widgets/
+│       ├── custom_donut_chart.dart    # Biểu đồ tròn Donut vẽ bằng CustomPainter Canvas
+│       ├── custom_bar_chart.dart      # Biểu đồ cột 7 ngày vẽ bằng CustomPainter Canvas
+│       └── expense_card.dart          # Component card hiển thị chi tiết từng hóa đơn
+└── main.dart                          # App Entrypoint & Cấu hình ThemeData Material 3</code></pre>
+
+---
+
+<h1>3. Chi Tiết Các Module Chức Năng Chính</h1>
+
+<h2>3.1. Module 1: Dashboard Thống kê Trang chủ (HomeDashboardScreen)</h2>
+<p>
+  Màn hình chính là trung tâm điều khiển của ứng dụng, mang lại ấn tượng đầu tiên với giao diện thẻ kính cao cấp (Modern Card Aesthetics):
+</p>
+<ul>
+  <li><strong>Thẻ tổng chi tiêu tháng hiện tại:</strong> Tự động tính toán tổng các khoản chi trong tháng, hiển thị số tiền định dạng VNĐ nổi bật.</li>
+  <li><strong>Nút bấm hành động nhanh (Quick Actions):</strong> Nút nổi bật "Quét Hóa Đơn Mới" kèm hiệu ứng gradient hiện đại.</li>
+  <li><strong>Danh sách giao dịch gần nhất:</strong> Hiển thị 5 khoản chi mới nhất với biểu tượng màu sắc đại diện cho từng danh mục.</li>
+  <li><strong>Thanh điều hướng dưới (Bottom Navigation Bar):</strong> Chuyển đổi mượt mà giữa Trang chủ, Sổ quỹ và Báo cáo biểu đồ.</li>
+</ul>
+
+<h2>3.2. Module 2: Nhận diện OCR On-Device & Quét Hóa Đơn (ScanReceiptScreen)</h2>
+<p>
+  Màn hình quét cung cấp 3 phương thức tiếp nhận hóa đơn linh hoạt:
+</p>
+<ol>
+  <li><strong>Chụp ảnh trực tiếp từ Camera:</strong> Thích hợp khi đang mua sắm tại cửa hàng.</li>
+  <li><strong>Chọn ảnh từ Thư viện (Gallery):</strong> Dành cho ảnh hóa đơn chụp trước đó hoặc ảnh chụp màn hình chuyển khoản e-banking.</li>
+  <li><strong>Demo Quét tức thì (One-Click Demo Scan):</strong> Tích hợp sẵn mẫu hóa đơn tiêu biểu của Nhà sách Fahasa VKU, Highlands Coffee, In ấn sự kiện CLB giúp kiểm thử nhanh không cần chuẩn bị ảnh.</li>
+</ol>
+
+<div class="page-break"></div>
+
+<!-- ================= PAGE 3 ================= -->
+<div class="doc-header">
+  <span>Học phần: Phát triển ứng dụng đa nền tảng</span>
+  <span>Báo Cáo Mini-Project 3: VKU Receipt OCR</span>
+</div>
+
+<h2>3.3. Module 3: Thuật toán Bóc tách Regex Thông minh (ReceiptParserEngine)</h2>
+<p>
+  Động cơ phân tích văn bản (`receipt_parser.dart`) sử dụng các bộ biểu thức chính quy (Regular Expressions) tinh chỉnh đặc thù cho hóa đơn bán lẻ tại Việt Nam:
+</p>
+
+<div class="avoid-break">
+  <h3>Thuật toán trích xuất các trường dữ liệu:</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Trường dữ liệu</th>
+        <th>Mẫu Regex / Logic Phân tích</th>
+        <th>Ví dụ Nhận dạng thành công</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Tổng Tiền (Total Amount)</strong></td>
+        <td>Tìm các dòng chứa từ khóa: <em>TỔNG CỘNG, THANH TOÁN, TỔNG TIỀN, TOTAL, THÀNH TIỀN</em> kết hợp bóc tách số và làm sạch dấu <code>.</code>, <code>,</code>, <code>đ</code>.</td>
+        <td>"TỔNG CỘNG: 165.000 VND" ➔ <strong>165.000 ₫</strong></td>
+      </tr>
+      <tr>
+        <td><strong>Ngày Lập (Date)</strong></td>
+        <td>Nhận diện các mẫu định dạng: <code>dd/MM/yyyy</code>, <code>dd-MM-yyyy</code>, <code>yyyy-MM-dd</code>, hoặc dòng chữ "Ngày: 12/10/2026".</td>
+        <td>"Ngày lập: 12/10/2026 14:30" ➔ <strong>12/10/2026</strong></td>
+      </tr>
+      <tr>
+        <td><strong>Tên Đơn Vị (Merchant)</strong></td>
+        <td>Quét các dòng đầu tiên của hóa đơn, loại bỏ các dòng số điện thoại/ngày tháng, ưu tiên dòng in hoa có ý nghĩa.</td>
+        <td>"NHÀ SÁCH FAHASA ĐÀ NẴNG"</td>
+      </tr>
+      <tr>
+        <td><strong>Tự động phân loại (Category)</strong></td>
+        <td>Quét từ khóa: <em>"cà phê, trà, bánh"</em> ➔ Ăn uống; <em>"giấy, bút, kẹp"</em> ➔ Văn phòng phẩm; <em>"backdrop, âm thanh, cờ"</em> ➔ Sự kiện CLB.</td>
+        <td>Chứa "Giấy A4, Bút" ➔ <strong>Văn phòng phẩm</strong></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<h2>3.4. Module 4: Màn hình Đối Soát & Chỉnh Sửa (ReviewReceiptScreen)</h2>
+<p>
+  Theo tiêu chuẩn thiết kế ứng dụng OCR tài chính (Human-in-the-loop), ứng dụng không lưu tự động ngầm mà luôn chuyển hướng sang màn hình đối soát:
+</p>
+<ul>
+  <li><strong>Ảnh Preview & Badge OCR:</strong> Hiển thị ảnh chụp hóa đơn đính kèm nhãn "OCR Tự Động".</li>
+  <li><strong>Form chỉnh sửa trực quan:</strong> Người dùng có thể tùy chỉnh lại tên cửa hàng, số tiền, ngày lập và chọn lại danh mục nếu muốn.</li>
+  <li><strong>Xem văn bản OCR gốc (Raw OCR Text Expander):</strong> Cho phép mở rộng xem toàn bộ nội dung text mà mô hình máy học đã nhận dạng, tăng tính minh bạch và độ tin cậy.</li>
+</ul>
+
+<h2>3.5. Module 5: Sổ Quỹ Toàn Diện (ExpenseListScreen)</h2>
+<ul>
+  <li><strong>Tìm kiếm thời gian thực (Live Search):</strong> Tìm nhanh theo tên đơn vị bán hoặc nội dung ghi chú hóa đơn.</li>
+  <li><strong>Lọc theo danh mục (Category Filter Chips):</strong> Lọc các khoản chi theo từng phân loại (Ăn uống, Sự kiện, Thiết bị, Di chuyển,...).</li>
+  <li><strong>Thao tác xóa vuốt (Dismissible Swipe-to-delete):</strong> Vuốt sang trái để xóa khoản chi khỏi cơ sở dữ liệu với hộp thoại xác nhận an toàn.</li>
+</ul>
+
+<h2>3.6. Module 6: Trực Quan Hóa Bằng Biểu Đồ Canvas (CustomPainter)</h2>
+<p>
+  Thay vì cài đặt các gói thư viện đồ họa cồng kềnh từ bên thứ ba, dự án trực tiếp triển khai đồ họa vector trên đối tượng <code>Canvas</code> của Flutter:
+</p>
+<div class="grid-2 avoid-break">
+  <div class="feature-box">
+    <h4>🍩 Biểu đồ Tròn Donut (CustomDonutChart)</h4>
+    <p>Vẽ các cung tròn tỉ lệ phần trăm với độ dày 22px, hiệu ứng góc bo tròn mềm mại và bảng màu đồng bộ theo từng danh mục.</p>
+  </div>
+  <div class="feature-box">
+    <h4>📊 Biểu đồ Cột 7 Ngày (CustomBarChart)</h4>
+    <p>Vẽ trục tọa độ, đường kẻ ngang lưới mờ và các cột chi tiêu của 7 ngày gần nhất với nhãn thứ/ngày tháng rõ ràng.</p>
+  </div>
+</div>
+
+---
+
+<h1>4. Giải Pháp Tương Thích Đa Nền Tảng (Cross-Platform & Web)</h1>
+
+<p>
+  Một trong những thành tựu kỹ thuật quan trọng của dự án là khả năng vận hành đồng bộ trên cả <strong>Mobile (Android, iOS)</strong> lẫn <strong>Web Browser (Chrome, Edge)</strong>:
+</p>
+
+<div class="callout avoid-break">
+  <div class="callout-title">💡 Thách thức kỹ thuật & Giải pháp khắc phục</div>
+  <p><strong>1. Thách thức SQLite trên Web:</strong> Gói <code>sqflite</code> sử dụng native C SQLite bindings chỉ hỗ trợ Mobile/Desktop. Khi chạy trên Chrome sẽ gây ra lỗi <em>Bad state: databaseFactory not initialized</em>.</p>
+  <p><strong>Giải pháp:</strong> Tại <code>DatabaseHelper</code>, tích hợp cơ chế <code>kIsWeb</code> thông minh: khi chạy trên Web, hệ thống tự động kích hoạt bộ nhớ In-Memory Store mô phỏng đầy đủ hành vi CRUD, lọc theo tháng và thống kê biểu đồ 7 ngày.</p>
+  <p><strong>2. Thách thức `dart:io File` & On-Device ML Kit trên Browser:</strong> Trình duyệt web không hỗ trợ thư viện <code>dart:io</code> và mô hình nhị phân Android/iOS ML Kit.</p>
+  <p><strong>Giải pháp:</strong> <code>OcrService</code> và <code>ReviewReceiptScreen</code> được cấu hình kiểm tra <code>kIsWeb</code> để hiển thị ảnh an toàn bằng <code>Image.network</code> và sử dụng engine phân tích hóa đơn tương thích.</p>
+</div>
+
+<div class="page-break"></div>
+
+<!-- ================= PAGE 4 ================= -->
+<div class="doc-header">
+  <span>Học phần: Phát triển ứng dụng đa nền tảng</span>
+  <span>Báo Cáo Mini-Project 3: VKU Receipt OCR</span>
+</div>
+
+<h1>5. Đảm Bảo Chất Lượng & Kết Quả Kiểm Thử (QA & Testing)</h1>
+
+<h2>5.1. Kết quả Kiểm thử Tự động (Automated Tests)</h2>
+<p>
+  Dự án đạt tỷ lệ kiểm thử thành công <strong>100%</strong> trên toàn bộ các bộ Test Suite:
+</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Tên Bộ Test (Test Suite)</th>
+      <th>Kịch Bản Kiểm Thử</th>
+      <th>Kết Quả Thực Tế</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>receipt_parser_test.dart</code></td>
+      <td>Trích xuất chính xác Merchant, Date, Total từ hóa đơn Nhà sách Fahasa</td>
+      <td><span class="badge badge-green">PASSED</span> (165.000 ₫, 12/10/2026)</td>
+    </tr>
+    <tr>
+      <td><code>receipt_parser_test.dart</code></td>
+      <td>Trích xuất chính xác Hóa đơn Highlands Coffee (cà phê, trà)</td>
+      <td><span class="badge badge-green">PASSED</span> (89.000 ₫, Ăn uống)</td>
+    </tr>
+    <tr>
+      <td><code>receipt_parser_test.dart</code></td>
+      <td>Trích xuất hóa đơn Thiết bị & In ấn sự kiện CLB Nam Kỳ</td>
+      <td><span class="badge badge-green">PASSED</span> (320.000 ₫, Sự kiện)</td>
+    </tr>
+    <tr>
+      <td><code>widget_test.dart</code></td>
+      <td>Khởi tạo và Render biểu đồ Custom Canvas Donut Chart</td>
+      <td><span class="badge badge-green">PASSED</span> (Vẽ Canvas chính xác)</td>
+    </tr>
+    <tr>
+      <td><code>widget_test.dart</code></td>
+      <td>Khởi tạo và Render biểu đồ Custom Canvas 7-Day Bar Chart</td>
+      <td><span class="badge badge-green">PASSED</span> (Vẽ Canvas chính xác)</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>5.2. Phân tích Tĩnh Mã Nguồn (Static Code Analysis)</h2>
+<div class="callout callout-success avoid-break">
+  <div class="callout-title">✅ Kiểm tra bằng flutter analyze</div>
+  Lệnh <code>flutter analyze</code> thực thi trên toàn bộ cây thư mục dự án cho kết quả:
+  <pre><code>Analyzing Mini-Project3...
+No issues found! (ran in 2.5s)</code></pre>
+  Không có bất kỳ cảnh báo lỗi cú pháp, lint lỗi thời hay vi phạm quy ước viết mã của Flutter SDK.
+</div>
+
+---
+
+<h1>6. Kết Luận & Hướng Phát Triển Đề Tài</h1>
+
+<h2>6.1. Kết quả đạt được</h2>
+<ul>
+  <li>Hoàn thành 100% các yêu cầu kỹ thuật của bài toán Mini-Project 3 thuộc học phần Phát triển ứng dụng đa nền tảng.</li>
+  <li>Tự động hóa hoàn toàn quy trình xử lý hóa đơn offline bằng công nghệ On-Device OCR và Regular Expressions thông minh.</li>
+  <li>Xây dựng giao diện người dùng Material 3 hiện đại, trực quan, hỗ trợ đầy đủ các tính năng đối soát và quản lý ngân sách.</li>
+  <li>Đưa mã nguồn lên kho lưu trữ GitHub chính thức: <code>https://github.com/zaaciet08/LTUDDNT_MiniProjects3</code>.</li>
+</ul>
+
+<h2>6.2. Hướng phát triển trong tương lai</h2>
+<ol>
+  <li><strong>Xuất báo cáo tài chính:</strong> Bổ sung tính năng xuất dữ liệu sổ quỹ ra file định dạng Excel (.xlsx) hoặc PDF để nộp báo cáo quyết toán cho Đoàn trường/Hội sinh viên VKU.</li>
+  <li><strong>Đồng bộ đám mây (Cloud Sync):</strong> Tích hợp Firebase Firestore hoặc Supabase để các thành viên trong Ban chủ nhiệm CLB có thể cùng quản lý chung một sổ quỹ.</li>
+  <li><strong>Tích hợp Trí tuệ Nhân tạo sinh (Generative AI / LLM):</strong> Ứng dụng trợ lý AI tư vấn và cảnh báo khi chi tiêu của CLB vượt hạn mức ngân sách định trước.</li>
+</ol>
+
+<br>
+<div style="text-align: right; margin-top: 25px;" class="avoid-break">
+  <p style="font-size: 13px; font-weight: 600; margin-bottom: 4px;">Người lập báo cáo</p>
+  <p style="font-size: 14px; font-weight: 700; color: #1e3a8a;">Võ Hoàng Gia Kiệt</p>
+  <p style="font-size: 12px; color: #64748b;">Sinh viên VKU - Lớp 22IT</p>
+</div>
+
+</body>
+</html>
